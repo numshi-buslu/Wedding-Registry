@@ -77,7 +77,7 @@
     (let
         (
             (registry-id (var-get next-registry-id))
-            (current-height block-height)
+            (current-height burn-block-height)
             (current-registries (default-to (list) (map-get? user-registries tx-sender)))
         )
         (asserts! (> (len couple-name) u0) ERR-INVALID-AMOUNT)
@@ -146,7 +146,7 @@
     (let
         (
             (gift (unwrap! (map-get? gifts gift-id) ERR-GIFT-NOT-FOUND))
-            (current-height block-height)
+            (current-height burn-block-height)
         )
         (asserts! (is-none (get claimed-by gift)) ERR-GIFT-ALREADY-CLAIMED)
         (asserts! (not (get is-pool-eligible gift)) ERR-NOT-AUTHORIZED) ;; Pool gifts handled differently
@@ -233,9 +233,6 @@
 
 ;; Constants
 (define-constant CONTRACT-OWNER tx-sender)
-(define-constant ERR-NOT-AUTHORIZED (err u100))
-(define-constant ERR-GIFT-NOT-FOUND (err u101))
-(define-constant ERR-GIFT-ALREADY-CLAIMED (err u102))
 (define-constant ERR-POOL-NOT-FOUND (err u200))
 (define-constant ERR-POOL-ALREADY-EXISTS (err u201))
 (define-constant ERR-CONTRIBUTION-TOO-LOW (err u202))
@@ -292,7 +289,7 @@
 )
     (let
         (
-            (current-height block-height)
+            (current-height burn-block-height)
         )
         (asserts! (> target-amount u0) ERR-INVALID-WITHDRAWAL)
         (asserts! (is-none (map-get? gift-pools gift-id)) ERR-POOL-ALREADY-EXISTS)
@@ -320,7 +317,7 @@
         (
             (pool (unwrap! (map-get? gift-pools gift-id) ERR-POOL-NOT-FOUND))
             (current-contribution (default-to u0 (map-get? pool-contributions {gift-id: gift-id, contributor: tx-sender})))
-            (current-height block-height)
+            (current-height burn-block-height)
         )
         (asserts! (not (get is-funded pool)) ERR-POOL-ALREADY-FUNDED)
         (asserts! (>= amount (var-get min-contribution)) ERR-CONTRIBUTION-TOO-LOW)
