@@ -1,5 +1,3 @@
-
-
 ;; Wedding Registry Core Contract
 ;; Handles basic gift management, claiming, and duplicate prevention
 
@@ -232,7 +230,6 @@
 ;; Handles contribution pooling for expensive items
 
 ;; Constants
-(define-constant CONTRACT-OWNER tx-sender)
 (define-constant ERR-POOL-NOT-FOUND (err u200))
 (define-constant ERR-POOL-ALREADY-EXISTS (err u201))
 (define-constant ERR-CONTRIBUTION-TOO-LOW (err u202))
@@ -273,8 +270,13 @@
 
 (define-private (add-contributor-gift (contributor principal) (gift-id uint))
     (let ((current-gifts (default-to (list) (map-get? contributor-gifts contributor))))
-        (map-set contributor-gifts contributor
-            (unwrap! (as-max-len? (append current-gifts gift-id) u100) ERR-INVALID-WITHDRAWAL))
+        (match (as-max-len? (append current-gifts gift-id) u100)
+            new-list (begin
+                (map-set contributor-gifts contributor new-list)
+                true
+            )
+            false
+        )
     )
 )
 
